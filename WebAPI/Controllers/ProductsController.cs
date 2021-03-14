@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Business.Abstract;
+﻿using Business.Abstract;
 using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -15,6 +16,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        //Loosely coupled
+        //naming convention
+        //IoC Container -- Inversion of Control
         IProductService _productService;
 
         public ProductsController(IProductService productService)
@@ -25,14 +29,20 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
+            //Swagger
+            //Dependency chain --
 
-            var result =_productService.GetAll();
+            Thread.Sleep(1000);
+
+            var result = _productService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
+
         }
+
         [HttpGet("getbyid")]
         public IActionResult GetById(int id)
         {
@@ -41,6 +51,31 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getbycategory")]
+        public IActionResult GetByCategory(int categoryId)
+        {
+            var result = _productService.GetAllByCategoryId(categoryId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("getproductdetails")]
+        public IActionResult GetProductDetails(int categoryId)
+        {
+            var result = _productService.GetProductDetails();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
             return BadRequest(result);
         }
 
@@ -54,5 +89,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+
     }
 }

@@ -11,11 +11,4 @@ namespace Business.CCS
             Console.WriteLine("Dosyaya Loglandı");
         }
     }
-    public class DatabaseLogger : ILogger
-    {
-        public void Log()
-        {
-            Console.WriteLine("Veritabanına Loglandı");
-        }
-    }
 }

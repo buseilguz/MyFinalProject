@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+ 
 using Business.Abstract;
 using Business.Concrete;
 using Core.DependencyResolvers;
-using Core.Extentions;
+using Core.Extensions;
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
@@ -22,6 +19,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebAPI
 {
@@ -37,9 +38,16 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //AOP
+            //Autofac, Ninject,CastleWindsor, StructureMap, LightInject, DryInject -->IoC Container
+            //AOP
+            //Postsharp
             services.AddControllers();
             //services.AddSingleton<IProductService,ProductManager>();
             //services.AddSingleton<IProductDal, EfProductDal>();
+
+            services.AddCors();
+
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -57,7 +65,9 @@ namespace WebAPI
                     };
                 });
 
-            services.AddDependencyResolvers(new ICoreModule[] { new CoreModule()});
+            services.AddDependencyResolvers(new ICoreModule[] {
+               new CoreModule()
+            });
 
         }
 
@@ -68,6 +78,8 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
@@ -81,6 +93,7 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
+           
         }
     }
 }
